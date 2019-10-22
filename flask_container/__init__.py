@@ -1,7 +1,7 @@
 import os
 
-from flask import Flask
-
+from flask import Flask, jsonify
+from flask_swagger_ui import get_swaggerui_blueprint
 
 def create_app(test_config=None):
     # create and configure the app
@@ -10,13 +10,18 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flask_container.sqlite'),
     )
-    from . import db
-    db.init_app(app)
-    from . import auth
-    app.register_blueprint(auth.bp)
-    from . import blog
-    app.register_blueprint(blog.bp)
-    app.add_url_rule('/', endpoint='index')
+    ### swagger specific ###
+    SWAGGER_URL = '/docs'
+    API_URL = '/static/swagger.json'
+    SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "flask_container"
+        }
+    )
+    app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
+    ### end swagger specific ###
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -31,9 +36,24 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    @app.route("/spec")
+    def spec():
+        swag = swagger(app)
+        swag['info']['version'] = "1.0"
+        swag['info']['title'] = "My API"
+        return jsonify(swag)
+
     # a simple page that says hello
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
+
+    from flask_container import db
+    db.init_app(app)
+    from flask_container import auth, blog, api
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(blog.bp)
+    app.register_blueprint(api.bp)
+    app.add_url_rule('/', endpoint='index')
 
     return app
