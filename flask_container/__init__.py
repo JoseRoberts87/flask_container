@@ -3,6 +3,7 @@ import os
 from flask import Flask, jsonify
 from flask_swagger_ui import get_swaggerui_blueprint
 
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -36,13 +37,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.route("/spec")
-    def spec():
-        swag = swagger(app)
-        swag['info']['version'] = "1.0"
-        swag['info']['title'] = "My API"
-        return jsonify(swag)
-
     # a simple page that says hello
     @app.route('/hello')
     def hello():
@@ -50,10 +44,14 @@ def create_app(test_config=None):
 
     from flask_container import db
     db.init_app(app)
-    from flask_container import auth, blog, api
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(blog.bp)
+    from flask_container import auth, blog, api, apps
+    app.register_blueprint(apps.bp)
     app.register_blueprint(api.bp)
+
+    from flaskr import auth, blog
+    app.register_blueprint(auth.bp, url_prefix='/index')
+    app.register_blueprint(blog.bp, url_prefix='/index')
+
     app.add_url_rule('/', endpoint='index')
 
     return app
