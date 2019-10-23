@@ -44,14 +44,14 @@ def create_app(test_config=None):
 
     from flask_container import db
     db.init_app(app)
-    from flask_container import auth, blog, api, apps
+    from flask_container import api, apps
     app.register_blueprint(apps.bp)
     app.register_blueprint(api.bp)
 
     from flaskr import auth, blog
-    app.register_blueprint(auth.bp, url_prefix='/index')
-    app.register_blueprint(blog.bp, url_prefix='/index')
+    app.register_blueprint(auth.bp, url_prefix='/flaskr')
+    app.register_blueprint(blog.bp, url_prefix='/flaskr')
 
-    app.add_url_rule('/', endpoint='index')
+    # app.add_url_rule('/', endpoint='index')
 
     return app
