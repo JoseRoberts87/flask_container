@@ -1,0 +1,11 @@
+[
+  {
+    "name": "flaskr.blog",
+    "modules": "blog",
+    "path": "/blog"
+  },
+  {
+    "name": "flaskr.auth",
+    "path": "/auth"
+  }
+]

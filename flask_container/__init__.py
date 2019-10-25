@@ -1,5 +1,5 @@
 import os
-
+import json
 from flask import Flask, jsonify
 from flask_swagger_ui import get_swaggerui_blueprint
 
@@ -48,10 +48,16 @@ def create_app(test_config=None):
     app.register_blueprint(apps.bp)
     app.register_blueprint(api.bp)
 
-    from flaskr import auth, blog
-    app.register_blueprint(auth.bp, url_prefix='/flaskr')
-    app.register_blueprint(blog.bp, url_prefix='/flaskr')
+    apps_config_path =  os.path.join(os.path.dirname(os.path.realpath(__file__)),'apps/apps.json')
+
+    def app_loader():
+        with open(apps_config_path, 'r') as modules:
+            for module in json.load(modules):
+                registrar = __import__(module.get('name'), fromlist=['bp'])
+                app.register_blueprint(registrar.bp, url_prefix=module.get('path'))
 
     # app.add_url_rule('/', endpoint='index')
+
+    app_loader()
 
     return app

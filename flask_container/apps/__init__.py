@@ -6,3 +6,7 @@ headers = {'Content-Type': 'application/json'}
 
 bp = Blueprint('apps',__name__, url_prefix='/apps')
 api = Api(bp, catch_all_404s=True)
+
+def app_loader():
+    # TODO: load apps
+    pass
