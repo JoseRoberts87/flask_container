@@ -48,7 +48,7 @@ def create_app(test_config=None):
     app.register_blueprint(apps.bp)
     app.register_blueprint(api.bp)
 
-    apps_config_path =  os.path.join(os.path.dirname(os.path.realpath(__file__)),'apps/apps.json')
+    apps_config_path =  os.path.join(os.path.dirname(os.path.realpath(__file__)),'apps', 'apps.json')
 
     def app_loader():
         with open(apps_config_path, 'r') as modules:
