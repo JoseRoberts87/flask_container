@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='flask_container',
-    version='1.0.1',
+    version='1.0.2',
     packages=find_packages(),
     include_package_data=True,
     license='MIT',  # Chose a license from here: https://help.github.com/articles/licensing-a-repository
@@ -19,6 +19,8 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'flask',
+        'Flask-RESTful==0.3.7',
+        'flask-swagger-ui==3.20.9'
     ],
     classifiers=[
         "License :: OSI Approved :: MIT License",

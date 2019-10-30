@@ -2,10 +2,23 @@
   {
     "name": "flaskr.blog",
     "modules": "blog",
-    "path": "/blog"
+    "path": "/blog",
+    "fromlist": [
+      "bp"
+    ]
   },
   {
     "name": "flaskr.auth",
-    "path": "/auth"
+    "path": "/auth",
+    "fromlist": [
+      "bp"
+    ]
+  },
+  {
+    "name": "ml_rest.api",
+    "path": "/ml_rest",
+    "fromlist": [
+      "ml_rest_bp"
+    ]
   }
 ]
