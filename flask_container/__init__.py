@@ -3,6 +3,8 @@ import json
 from flask import Flask, jsonify
 from flask_swagger_ui import get_swaggerui_blueprint
 
+headers = {'Content-Type': 'application/json'}
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -38,17 +40,52 @@ def create_app(test_config=None):
         pass
 
     # a simple page that says hello
-    @app.route('/hello')
+    @app.route('/')
     def hello():
-        return 'Hello, World!'
+        response = {'data': 'hello from flask Container',
+                    'links': 'the "/docs" endpoint has more details'}
+        return jsonify(response, 200, headers)
 
     from flask_container import db
     db.init_app(app)
     from flask_container import api, apps
     app.register_blueprint(apps.bp)
-    app.register_blueprint(api.bp)
 
-    apps_config_path =  os.path.join(os.path.dirname(os.path.realpath(__file__)),'apps', 'apps.json')
+    apps_json = 'apps.json'
+    apps_folder = 'apps'
+
+    apps_config_path = os.path.dirname(os.path.realpath(__file__))
+
+    if 'venv' in apps_config_path:
+        try:
+            paths_list = apps_config_path.split(os.path.sep)
+            path_root = paths_list.index('venv')
+            new_path = os.path.join((os.path.sep).join(
+                paths_list[:path_root]), apps_folder)
+
+            if not os.path.exists(new_path):
+                os.makedirs(new_path)
+
+            file_path = os.path.join(new_path, apps_json)
+            if not os.path.exists(file_path):
+                with open(file_path, 'a') as f:
+                    f.write('[{\
+                        "name": "flask_container.api",\
+                        "path": "/api",\
+                        "fromlist": [\
+                            "bp"\
+                        ]\
+                    }]')
+                    f.close
+
+            apps_config_path = file_path
+
+        except OSError:
+            with open(os.path.join(new_path, 'app.log')) as f:
+                f.write(OSError)
+                f.close
+
+    apps_config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'apps', 'apps.json')
 
     def app_loader():
         with open(apps_config_path, 'r') as modules:

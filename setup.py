@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='flask_container',
-    version='1.0.4',
+    version='1.0.5',
     packages=find_packages(),
     include_package_data=True,
     license='MIT',  # Chose a license from here: https://help.github.com/articles/licensing-a-repository
